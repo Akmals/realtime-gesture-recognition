@@ -4,15 +4,22 @@ import numpy as np
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-
 class PoseDetector:
     def __init__(self):
         # Initialize the PoseLandmarker using the generic tasks API
         base_options = python.BaseOptions(
-            model_asset_path='pose_landmarker_lite.task')
+            model_asset_path='pose_landmarker_lite.task'
+            # We explicitly leave out the delegate configuration, letting TFLite
+            # fallback to CPU since Mac's Metal GPU backend throws NORM_RECT error
+            # when calculating specific facial landmarks without a square projection matrix.
+        )
         options = vision.PoseLandmarkerOptions(
             base_options=base_options,
-            output_segmentation_masks=False)
+            output_segmentation_masks=False,
+            min_pose_detection_confidence=0.5,
+            min_pose_presence_confidence=0.5,
+            min_tracking_confidence=0.5)
+            
         self.detector = vision.PoseLandmarker.create_from_options(options)
 
         # Landmark indices (these match standard MediaPipe Pose)
