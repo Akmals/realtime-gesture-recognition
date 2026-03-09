@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 from pose_detector import PoseDetector
 from meme_manager import MemeManager
 from collections import deque
@@ -48,8 +49,8 @@ def main():
         if len(set(state_buffer)) == 1:
             current_stable_state = state_buffer[0]
 
-        # Display meme based on the stable state
-        meme_manager.display_meme(current_stable_state)
+        # Get meme image based on the stable state
+        meme_img = meme_manager.get_meme(current_stable_state)
 
         # Draw the state on the webcam feed
         color = (0, 255, 0) if current_stable_state != "none" else (0, 0, 255)
@@ -59,8 +60,22 @@ def main():
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255),
                     1, cv2.LINE_AA)
 
-        # Show webcam feed
-        cv2.imshow('Webcam Feed', frame)
+        # Ensure both images have the same height for horizontal concatenation
+        h_frame, w_frame = frame.shape[:2]
+        h_meme, w_meme = meme_img.shape[:2]
+        
+        if h_frame != h_meme:
+            scale = h_frame / h_meme
+            new_w = int(w_meme * scale)
+            meme_img_resized = cv2.resize(meme_img, (new_w, h_frame))
+        else:
+            meme_img_resized = meme_img
+            
+        # Combine webcam feed and meme side-by-side
+        combined_frame = np.hstack((frame, meme_img_resized))
+
+        # Show combined feed
+        cv2.imshow('Meme Tracker', combined_frame)
 
         # Break the loop when 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):

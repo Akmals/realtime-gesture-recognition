@@ -16,8 +16,6 @@ class MemeManager:
             os.makedirs(self.assets_dir)
 
         self.load_memes()
-        cv2.namedWindow("Meme Reaction", cv2.WINDOW_NORMAL)
-        cv2.imshow("Meme Reaction", self.default_img)
 
     def load_memes(self):
         # We try to load files that the user might have saved
@@ -53,11 +51,11 @@ class MemeManager:
                 "Please add some images to the 'assets' folder with "
                 "names like 'thinking.jpg' or 'aha.jpg'.")
 
-    def display_meme(self, state):
+    def get_meme(self, state):
         if state == "none":
-            cv2.imshow("Meme Reaction", self.default_img)
+            return self.default_img
         elif state in self.memes:
-            cv2.imshow("Meme Reaction", self.memes[state])
+            return self.memes[state]
         else:
             # If state is recognized but we don't have an image for it,
             # show placeholder with text
@@ -67,4 +65,4 @@ class MemeManager:
             cv2.putText(placeholder, "No image found in assets!",
                         (50, 250), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
                         (0, 0, 255), 2)
-            cv2.imshow("Meme Reaction", placeholder)
+            return placeholder
