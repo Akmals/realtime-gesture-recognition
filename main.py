@@ -6,7 +6,7 @@ from collections import deque
 
 
 def main():
-    print("Initializing Meme Tracker...")
+    print("Initializing Gesture Recognition...")
 
     # Initialize detector and meme manager
     detector = PoseDetector()
@@ -75,7 +75,7 @@ def main():
         combined_frame = np.hstack((frame, meme_img_resized))
 
         # Show combined feed
-        cv2.imshow('Meme Tracker', combined_frame)
+        cv2.imshow('Gesture Recognition', combined_frame)
 
         # Break the loop when 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
